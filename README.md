@@ -1,58 +1,60 @@
 <div align="center">
-  <h1>NOVA ML Preprod</h1>
-  <p>Environnement d'entrainement et d'experimentation des modeles de machine learning de la plateforme de sante NOVA.</p>
+  <img src=".github/assets/banner.png" alt="NOVA_ML_PREPROD banner" width="100%" />
+
+  <h1>NOVA_ML_PREPROD</h1>
+  <p>Training and experimentation environment for the machine learning models of the NOVA health platform.</p>
 
 <p>
-  <img src="https://img.shields.io/github/last-commit/BaditSad/NOVA_ML_PREPROD" alt="last update" />
-  <img src="https://img.shields.io/github/languages/top/BaditSad/NOVA_ML_PREPROD" alt="top language" />
+  <img src="https://img.shields.io/github/last-commit/nova-health-platform/NOVA_ML_PREPROD" alt="last update" />
+  <img src="https://img.shields.io/github/languages/top/nova-health-platform/NOVA_ML_PREPROD" alt="top language" />
 </p>
 </div>
 
 <br />
 
-# Table des matieres
+## :notebook_with_decorative_cover: Table of Contents
 
-- [A propos](#a-propos)
-  * [Stack technique](#stack-technique)
-  * [Fonctionnalites](#fonctionnalites)
-  * [Variables d'environnement](#variables-denvironnement)
-- [Demarrage](#demarrage)
-  * [Prerequis](#prerequis)
-  * [Lancer les notebooks](#lancer-les-notebooks)
-- [Depots lies](#depots-lies)
-- [Contact](#contact)
+- [About](#star2-about)
+  * [Tech Stack](#space_invader-tech-stack)
+  * [Features](#dart-features)
+  * [Environment Variables](#key-environment-variables)
+- [Getting Started](#toolbox-getting-started)
+  * [Prerequisites](#bangbang-prerequisites)
+  * [Run the Notebooks](#running-run-the-notebooks)
+- [Related Repositories](#link-related-repositories)
+- [Contact](#handshake-contact)
 
-## A propos
+## :star2: About
 
-NOVA ML Preprod regroupe les notebooks d'entrainement utilises avant de livrer les modeles ML en production sur les depots dedies de NOVA. C'est ici que les modeles sont concus, testes et exportes (joblib/Keras) avant d'etre repris tels quels par les services de production.
+NOVA_ML_PREPROD gathers the training notebooks used before shipping ML models to production in NOVA's dedicated repositories. This is where models are designed, tested and exported (joblib/Keras) before being picked up as-is by the production services.
 
-Le depot est organise en deux dossiers, un par module ML :
+The repository is organized into two folders, one per ML module:
 
-- `ML_ANALYSIS` : entrainement du modele d'analyse de symptomes. Les donnees sont recuperees depuis PostgreSQL (table `dataset`, alimentee par NOVA DB), sur-echantillonnees pour les maladies sous representees, reduites en dimension (PCA) puis passees dans un autoencodeur Keras avant classification par un `MLPClassifier` scikit-learn. Les artefacts entraines (`model_analysis.joblib`, `scaler.joblib`, `pca.joblib`, `label_encoder.joblib`, `encoder.keras`, `symptom_columns.json`) sont exportes dans `ML_ANALYSIS/joblibs` pour etre repris par NOVA_ML_ANALYSIS. Le notebook `import_&_feed_tables.ipynb` gere l'import/la preparation des donnees en amont de l'entrainement.
-- `ML_MENTAL_HEALTH` : jeu de donnees de suivi psychologique (`data.csv`, format questionnaire type DASS avec reponses, intensite et temps de reponse par question). Le notebook d'entrainement de ce module est encore vide, le dataset est en place mais le modele reste a construire.
+- `ML_ANALYSIS`: training of the symptom analysis model. Data is pulled from PostgreSQL (the `dataset` table, fed by NOVA_DB), oversampled for underrepresented diseases, reduced in dimension (PCA) and passed through a Keras autoencoder before classification by a scikit-learn `MLPClassifier`. The trained artifacts (`model_analysis.joblib`, `scaler.joblib`, `pca.joblib`, `label_encoder.joblib`, `encoder.keras`, `symptom_columns.json`) are exported to `ML_ANALYSIS/joblibs` to be picked up by NOVA_ML_ANALYSIS. The `import_&_feed_tables.ipynb` notebook handles data import and preparation ahead of training.
+- `ML_MENTAL_HEALTH`: psychological monitoring dataset (`data.csv`, a DASS-style questionnaire format with answers, intensity and response time per question). The training notebook for this module is still empty, the dataset is in place but the model has yet to be built.
 
-### Stack technique
+### :space_invader: Tech Stack
 
 <details>
   <summary>Machine Learning</summary>
   <ul>
-    <li><a href="https://www.tensorflow.org/">TensorFlow / Keras</a> (autoencodeur)</li>
+    <li><a href="https://www.tensorflow.org/">TensorFlow / Keras</a> (autoencoder)</li>
     <li><a href="https://scikit-learn.org/">scikit-learn</a> (MLPClassifier, PCA, StandardScaler, LabelEncoder)</li>
-    <li><a href="https://joblib.readthedocs.io/">Joblib</a> (serialisation des modeles)</li>
+    <li><a href="https://joblib.readthedocs.io/">Joblib</a> (model serialization)</li>
   </ul>
 </details>
 
 <details>
-  <summary>Donnees</summary>
+  <summary>Data</summary>
   <ul>
     <li><a href="https://pandas.pydata.org/">Pandas</a></li>
     <li><a href="https://numpy.org/">NumPy</a></li>
-    <li><a href="https://www.postgresql.org/">PostgreSQL</a> (source des donnees d'analyse de symptomes)</li>
+    <li><a href="https://www.postgresql.org/">PostgreSQL</a> (source of the symptom analysis data)</li>
   </ul>
 </details>
 
 <details>
-  <summary>Visualisation</summary>
+  <summary>Visualization</summary>
   <ul>
     <li><a href="https://matplotlib.org/">Matplotlib</a></li>
     <li><a href="https://seaborn.pydata.org/">Seaborn</a></li>
@@ -60,25 +62,25 @@ Le depot est organise en deux dossiers, un par module ML :
 </details>
 
 <details>
-  <summary>Environnement</summary>
+  <summary>Environment</summary>
   <ul>
     <li><a href="https://jupyter.org/">Jupyter Notebook</a></li>
   </ul>
 </details>
 
-### Fonctionnalites
+### :dart: Features
 
-- Chargement des donnees de symptomes/maladies depuis PostgreSQL et augmentation des classes minoritaires
-- Reduction de dimension par PCA puis compression par autoencodeur Keras
-- Recherche d'hyperparametres (`RandomizedSearchCV`) et entrainement d'un `MLPClassifier` pour la prediction de maladies a partir de symptomes
-- Evaluation du modele (F1-score, accuracy, matrice de confusion, rapport de classification)
-- Export des modeles et objets de pretraitement pour reutilisation en production
-- Prediction de demonstration a partir d'une liste de symptomes actives, avec top 5 des maladies les plus probables
-- Jeu de donnees pret pour un futur modele de suivi psychologique (module mental health)
+- Loading symptom/disease data from PostgreSQL and oversampling minority classes
+- Dimensionality reduction via PCA followed by compression through a Keras autoencoder
+- Hyperparameter search (`RandomizedSearchCV`) and training of an `MLPClassifier` to predict diseases from symptoms
+- Model evaluation (F1-score, accuracy, confusion matrix, classification report)
+- Export of models and preprocessing objects for reuse in production
+- Demo prediction from a list of active symptoms, with the top 5 most likely diseases
+- Dataset ready for a future psychological monitoring model (mental health module)
 
-### Variables d'environnement
+### :key: Environment Variables
 
-Les notebooks se connectent a PostgreSQL via un fichier `.env` (non versionne) :
+The notebooks connect to PostgreSQL via a `.env` file (not versioned):
 
 `DB_HOST`
 
@@ -90,33 +92,34 @@ Les notebooks se connectent a PostgreSQL via un fichier `.env` (non versionne) :
 
 `DB_PORT`
 
-## Demarrage
+## :toolbox: Getting Started
 
-### Prerequis
+### :bangbang: Prerequisites
 
-Python avec Jupyter, un acces a la base PostgreSQL alimentee par [NOVA_DB](https://github.com/BaditSad/NOVA_DB).
+Python with Jupyter, and access to the PostgreSQL database fed by [NOVA_DB](https://github.com/nova-health-platform/NOVA_DB).
 
-### Lancer les notebooks
+### :running: Run the Notebooks
 
-Les dependances sont installees directement en premiere cellule du notebook `model.ipynb` (tensorflow, scikit-learn, joblib, matplotlib, pandas, numpy, seaborn, psycopg2-binary, python-dotenv, flask). Il suffit d'ouvrir le notebook et d'executer les cellules dans l'ordre :
+Dependencies are installed directly in the first cell of the `model.ipynb` notebook (tensorflow, scikit-learn, joblib, matplotlib, pandas, numpy, seaborn, psycopg2-binary, python-dotenv, flask). Simply open the notebook and run the cells in order:
 
 ```bash
 jupyter notebook ML_ANALYSIS/model.ipynb
 ```
 
-## Depots lies
+## :link: Related Repositories
 
-Ce depot est l'environnement d'entrainement de l'ecosysteme NOVA, compose de plusieurs services :
+This repository is the training environment for the NOVA ecosystem, composed of several services:
 
-- [NOVA_WEB](https://github.com/BaditSad/NOVA_WEB) : frontend web de la plateforme
-- [NOVA_API](https://github.com/BaditSad/NOVA_API) : API principale de NOVA
-- [NOVA_DB](https://github.com/BaditSad/NOVA_DB) : base de donnees de reference (symptomes, maladies, traitements)
-- [NOVA_LOGS_DB](https://github.com/BaditSad/NOVA_LOGS_DB) : stockage des logs applicatifs
-- [NOVA_ML_ANALYSIS](https://github.com/BaditSad/NOVA_ML_ANALYSIS) : service de production qui embarque le modele entraine ici
-- [NOVA_ML_MENTAL_HEALTH](https://github.com/BaditSad/NOVA_ML_MENTAL_HEALTH) : module de suivi psychologique
-- [NOVA_ML_SCAN_BODY](https://github.com/BaditSad/NOVA_ML_SCAN_BODY) : module de check-up dermatologique par computer vision
+- [NOVA_WEB](https://github.com/nova-health-platform/NOVA_WEB): web frontend of the platform
+- [NOVA_API](https://github.com/nova-health-platform/NOVA_API): main NOVA API
+- [NOVA_DB](https://github.com/nova-health-platform/NOVA_DB): reference database (symptoms, diseases, treatments)
+- [NOVA_LOGS_DB](https://github.com/nova-health-platform/NOVA_LOGS_DB): application log storage
+- [NOVA_ML_ANALYSIS](https://github.com/nova-health-platform/NOVA_ML_ANALYSIS): production service that embeds the model trained here
+- [NOVA_ML_MENTAL_HEALTH](https://github.com/nova-health-platform/NOVA_ML_MENTAL_HEALTH): psychological monitoring module
+- [NOVA_ML_SCAN_BODY](https://github.com/nova-health-platform/NOVA_ML_SCAN_BODY): computer vision dermatological check-up module
+- [NOVA-CORE](https://github.com/nova-health-platform/NOVA-CORE): architecture overview and local orchestration for the whole platform
 
-## Contact
+## :handshake: Contact
 
 Brieuc Dumortier - [LinkedIn](https://www.linkedin.com/in/dumortier-brieuc/) - dumortier.contact@gmail.com
 
